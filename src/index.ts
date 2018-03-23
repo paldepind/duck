@@ -15,13 +15,18 @@ interface DocEntry {
   returnType?: string;
 }
 
+const defaultOptions = {
+  target: ts.ScriptTarget.ES5,
+  module: ts.ModuleKind.CommonJS
+};
+
 /** Generate documentation for all classes in a set of .ts files */
-function generateDocumentation(
-  fileNames: string[],
-  options: ts.CompilerOptions
-): void {
+export function generateJSON(
+  fileName: string,
+  options: ts.CompilerOptions = defaultOptions
+): DocEntry[] {
   // Build a program using the set of root file names in fileNames
-  let program = ts.createProgram(fileNames, options);
+  let program = ts.createProgram([fileName], options);
 
   // Get the checker, we will use it to find more about classes
   let checker = program.getTypeChecker();
@@ -36,10 +41,7 @@ function generateDocumentation(
     }
   }
 
-  // print out the doc
-  fs.writeFileSync("type-info.json", JSON.stringify(output, undefined, 2));
-
-  return;
+  return output;
 
   /** visit nodes finding exported classes */
   function visit(sourceFile: ts.SourceFile, node: ts.Node) {
@@ -65,14 +67,8 @@ function isNodeExported(node: ts.Node): boolean {
   return (ts.getCombinedModifierFlags(node) & ts.ModifierFlags.Export) !== 0;
 }
 
-generateDocumentation(process.argv.slice(2), {
-  target: ts.ScriptTarget.ES5,
-  module: ts.ModuleKind.CommonJS
-});
-
 /** Serialize a signature (call or construct) */
 function serializeSignature(checker: ts.TypeChecker, signature: ts.Signature) {
-  console.log(signature);
   return {
     parameters: signature.parameters.map(
       serializeSymbol.bind(undefined, checker)

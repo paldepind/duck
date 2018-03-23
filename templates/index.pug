@@ -1,0 +1,12 @@
+octype html
+html(lang="en")
+  head
+    title List documentation
+    meta(name="viewport" content="width=device-width")
+  body
+    p Hello, world!
+    each val in data
+      div
+        h2= val.name
+        p Type: #{val.type}
+        p #{val.documentation}
