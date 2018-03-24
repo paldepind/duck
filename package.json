@@ -10,12 +10,19 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^9.4.6",
-    "prettier": "^1.10.2",
+    "prettier": "^1.11.1",
     "pug": "^2.0.1",
     "ts-node": "^5.0.0",
     "typescript": "^2.7.2"
   },
   "dependencies": {
+    "@types/pug": "^2.0.4",
+    "@types/yargs": "^11.0.0",
     "yargs": "^11.0.0"
+  },
+  "prettier": {
+    "semi": false,
+    "singleQuote": true,
+    "bracketSpacing": false
   }
 }
