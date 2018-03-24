@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css" integrity="sha384-v2Tw72dyUXeU3y4aM2Y0tBJQkGfplr39mxZqlTBDUZAb9BGoC40+rdFCG0m10lXk" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/fontawesome.css" integrity="sha384-q3jl8XQu1OpdLgGFvNRnPdj5VIlCvgsDQTQB6owSOHWlAurxul7f+JpUOVdAiJ5P" crossorigin="anonymous">
+  </head>
+  <body>
+    <div class="container">
+      <aside class="sidebar">
+        <div id="menu" class="fixed sidebar-follow">
+          <ul>
+            {{#each data}}
+              <li><a href="#{{name}}">{{name}}</a></li>
+            {{/each}}
+          </ul>
+        </div>
+      </aside>
+      <section class="content">
+        {{#each data}}
+          <div class="fn">
+            <div id="{{name}}" class="signature">
+              <span class="name">
+                <a class="section-anchor" href="#{{name}}">#</a>
+                {{name}}</span><span class="type">{{type}}</span>
+            </div>
+            <p>{{documentation}}</p>
+          </div>
+        {{/each}}
+      </section>
+    </div>
+  </body>
+</html>
