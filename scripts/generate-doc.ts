@@ -5,6 +5,32 @@ import {generateJSON} from '../src/index'
 import * as handlebars from 'handlebars'
 import * as yargs from 'yargs'
 import * as sass from 'node-sass'
+import * as MarkdownIt from 'markdown-it'
+import * as hljs from 'highlight.js'
+
+// const md = MarkdownIt()
+const md = MarkdownIt({
+  highlight: function(str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return (
+          '<pre class="hljs"><code>' +
+          hljs.highlight(lang, str, true).value +
+          '</code></pre>'
+        )
+      } catch (__) {}
+    }
+
+    return (
+      '<pre class="hljs"><code>' + md.utils.escapeHtml(str) + '</code></pre>'
+    )
+  }
+})
+
+handlebars.registerHelper('md', function(text) {
+  return new handlebars.SafeString(md.render(text))
+  // return md.render(options.fn(this))
+})
 
 function generateDocumentation(argv) {
   // const template = path.resolve(__dirname, '../templates/index.pug')

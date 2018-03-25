@@ -20,6 +20,8 @@
     "@types/pug": "^2.0.4",
     "@types/yargs": "^11.0.0",
     "handlebars": "^4.0.11",
+    "highlight.js": "^9.12.0",
+    "markdown-it": "^8.4.1",
     "yargs": "^11.0.0"
   },
   "prettier": {

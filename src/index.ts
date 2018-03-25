@@ -38,8 +38,6 @@ export function generateJSON(
 ): DocEntry[] {
   // Build a program using the set of root file names in fileNames
   const program = ts.createProgram([fileName], options)
-
-  // Get the checker, we will use it to find more about classes
   const checker = program.getTypeChecker()
 
   let output: DocEntry[] = []
@@ -54,7 +52,7 @@ export function generateJSON(
         [] as DocEntry[],
         sourceFile
       )
-      output = output.concat(out);
+      output = output.concat(out)
     }
   }
   return output
@@ -69,11 +67,11 @@ function visit(
   if (!isNodeExported(node)) {
     return []
   }
-  const lineAndCharacter = sourceFile.getLineAndCharacterOfPosition(
-    node.getStart()
-  )
   const result = serializeNode(checker, node)
   if (result !== undefined) {
+    const lineAndCharacter = sourceFile.getLineAndCharacterOfPosition(
+      node.getStart()
+    )
     return [Object.assign(lineAndCharacter, result)]
   } else if (ts.isModuleDeclaration(node)) {
     // This is a namespace, visit its children
@@ -105,10 +103,12 @@ function serializeSignature(checker: TypeChecker, signature: ts.Signature) {
 }
 
 /** Serialize a symbol into a json object */
-function serializeSymbol(checker: TypeChecker, symbol: ts.Symbol): DocEntry {
+function serializeSymbol(checker: TypeChecker, symbol: ts.Symbol) {
   return {
     name: symbol.getName(),
-    documentation: ts.displayPartsToString(symbol.getDocumentationComment()),
+    documentation: ts.displayPartsToString(
+      symbol.getDocumentationComment(checker)
+    ),
     type: checker.typeToString(
       checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!)
     )
@@ -116,19 +116,20 @@ function serializeSymbol(checker: TypeChecker, symbol: ts.Symbol): DocEntry {
 }
 
 function serializeFunction(checker: TypeChecker, node: ts.FunctionDeclaration) {
-  let symbol = checker.getSymbolAtLocation(node.name)
+  let symbol = checker.getSymbolAtLocation(node.name!)!
   let details = serializeSymbol(checker, symbol)
+  if (details.name === 'insert') {
+    console.log(node)
+    console.log(checker.getSymbolAtLocation(node))
+  }
 
   // Get the construct signatures
-  let constructorType = checker.getTypeOfSymbolAtLocation(
-    symbol,
-    symbol.valueDeclaration!
-  )
-  details.signatures = constructorType
+  let type = checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!)
+  const signatures = type
     .getCallSignatures()
-    .map(serializeSignature.bind(undefined, checker))
+    .map(s => serializeSignature(checker, s))
 
-  return Object.assign({thing: 'function'}, details)
+  return Object.assign({sort: 'function', signatures}, details)
 }
 
 function serializeClass(checker: TypeChecker, node: ts.ClassDeclaration) {
