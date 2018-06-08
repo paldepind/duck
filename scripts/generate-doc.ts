@@ -40,6 +40,9 @@ function generateDocumentation(argv) {
 
   const source = argv._[0]
 
+  if (!fs.existsSync(argv.o)) {
+    fs.mkdirSync(argv.o)
+}
   // Generate data and data.json
   const data = generateJSON(source)
   fs.writeFileSync(path.resolve(argv.o, 'data.json'), JSON.stringify(data))
