@@ -39,6 +39,9 @@ function generateDocumentation(argv) {
   // const templateFn = pug.compileFile(template)
 
   const source = argv._[0]
+  if (!fs.existsSync(argv.o)) {
+    fs.mkdirSync(argv.o)
+  }
 
   // Generate data and data.json
   const data = generateJSON(source)
