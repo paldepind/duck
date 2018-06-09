@@ -3,8 +3,10 @@ import {TypeChecker} from 'typescript'
 
 // This will extract the information necessary to generate documentation.
 
+type Sort = 'function' | 'class'
+
 export interface DocEntry {
-  sort?: 'function' | 'class'
+  sort?: Sort
   name?: string
   fileName?: string
   documentation?: string
@@ -97,7 +99,9 @@ function serializeSignature(checker: TypeChecker, signature: ts.Signature) {
       serializeSymbol.bind(undefined, checker)
     ),
     returnType: checker.typeToString(signature.getReturnType()),
-    documentation: ts.displayPartsToString(signature.getDocumentationComment()),
+    documentation: ts.displayPartsToString(
+      signature.getDocumentationComment(checker)
+    ),
     tags: signature.getJsDocTags()
   }
 }
@@ -118,10 +122,6 @@ function serializeSymbol(checker: TypeChecker, symbol: ts.Symbol) {
 function serializeFunction(checker: TypeChecker, node: ts.FunctionDeclaration) {
   let symbol = checker.getSymbolAtLocation(node.name!)!
   let details = serializeSymbol(checker, symbol)
-  if (details.name === 'insert') {
-    console.log(node)
-    console.log(checker.getSymbolAtLocation(node))
-  }
 
   // Get the construct signatures
   let type = checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!)
@@ -133,7 +133,7 @@ function serializeFunction(checker: TypeChecker, node: ts.FunctionDeclaration) {
 }
 
 function serializeClass(checker: TypeChecker, node: ts.ClassDeclaration) {
-  let symbol = checker.getSymbolAtLocation(node.name)
+  const symbol = checker.getSymbolAtLocation(node.name!)
 
   let details = serializeSymbol(checker, symbol)
 
@@ -142,11 +142,20 @@ function serializeClass(checker: TypeChecker, node: ts.ClassDeclaration) {
     symbol,
     symbol.valueDeclaration!
   )
-  details.constructors = constructorType
+  const constructors = constructorType
     .getConstructSignatures()
     .map(serializeSignature.bind(undefined, checker))
-  details.sort = 'class'
-  return details
+
+  // We get the type of an instance of the class by getting the return
+  // type of the first constructor signature
+  const instanceType = constructorType
+    .getConstructSignatures()[0]
+    .getReturnType()
+  const properties = instanceType
+    .getProperties()
+    .map(s => serializeSymbol(checker, s))
+
+  return {properties, constructors, ...details}
 }
 
 function serializeNode(checker: TypeChecker, node: ts.Node) {
