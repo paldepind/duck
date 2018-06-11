@@ -3,7 +3,7 @@ import {TypeChecker} from 'typescript'
 
 // This will extract the information necessary to generate documentation.
 
-type Sort = 'function' | 'class'
+export type Sort = 'function' | 'class'
 
 export interface DocEntry {
   sort?: Sort
@@ -25,7 +25,7 @@ export type SymbolDoc = {
 
 export type ClassDoc = SymbolDoc & {
   sort: 'class'
-  properties: any
+  properties: SymbolDoc
 }
 
 export type FunctionDoc = SymbolDoc & {
@@ -33,9 +33,12 @@ export type FunctionDoc = SymbolDoc & {
   signatures: any[]
 }
 
-const defaultOptions = {
-  target: ts.ScriptTarget.ES5,
-  module: ts.ModuleKind.CommonJS
+const defaultOptions: ts.CompilerOptions = {
+  target: ts.ScriptTarget.ES2016,
+  module: ts.ModuleKind.CommonJS,
+  compilerOptions: {
+    strict: true
+  }
 }
 
 function foldlChildren<A>(
@@ -131,7 +134,9 @@ function serializeSymbol(checker: TypeChecker, symbol: ts.Symbol) {
       symbol.getDocumentationComment(checker)
     ),
     type: checker.typeToString(
-      checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!)
+      checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!),
+      undefined,
+      ts.TypeFormatFlags.NoTruncation
     ),
     tags: symbol
       .getJsDocTags()
