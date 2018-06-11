@@ -12,14 +12,24 @@ html(lang="en")
         #menu.fixed.sidebar-follow
           ul
           each val in data
-            li
-              a(href=`#${val.name}`)= val.name
+            li: a(href=`#${val.name}`)= val.name
       section.content
         each val in data
-          .fn
-            div.signature(id=val.name)
-              span.name
-                a.section-anchor(href=`#${val.name}`) #
-                div= val.name
-                span.type= type
-            p= val.documentation
+          case val.sort
+            when 'function'
+              .fn
+                div.signature(id=val.name)
+                  span.name
+                    a.section-anchor(href=`#${val.name}`) #
+                    | #{val.name}
+                  span.type= val.type
+                p
+                  != md(val.documentation)
+                if val.tags.example
+                  != highlight(val.tags.example)
+            when 'class'
+              .fn
+                .signature(id=val.name)
+                  span.name
+                    a.section-anchor(href=`#${val.name}`) #
+                    | #{val.name}

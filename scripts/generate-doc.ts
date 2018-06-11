@@ -33,6 +33,14 @@ const md = MarkdownIt({
   }
 })
 
+function highlight(code: string): string {
+  return (
+    '<pre class="hljs"><code>' +
+    hljs.highlight('typescript', code, true).value +
+    '</code></pre>'
+  )
+}
+
 handlebars.registerHelper('md', function(text: string) {
   return new handlebars.SafeString(md.render(text))
   // return md.render(options.fn(this))
@@ -56,7 +64,7 @@ function generateDocumentation(argv: any) {
   // Generate index.html
   const rendered = pug.renderFile(
     path.resolve(__dirname, '../templates/index.pug'),
-    {data}
+    {data, md: (s: string) => md.render(s), highlight}
   )
 
   /*

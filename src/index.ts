@@ -16,6 +16,23 @@ export interface DocEntry {
   returnType?: string
 }
 
+export type SymbolDoc = {
+  name: string
+  type: string
+  documentation: string
+  tags: Record<string, string>
+}
+
+export type ClassDoc = SymbolDoc & {
+  sort: 'class'
+  properties: any
+}
+
+export type FunctionDoc = SymbolDoc & {
+  sort: 'function'
+  signatures: any[]
+}
+
 const defaultOptions = {
   target: ts.ScriptTarget.ES5,
   module: ts.ModuleKind.CommonJS
@@ -115,11 +132,20 @@ function serializeSymbol(checker: TypeChecker, symbol: ts.Symbol) {
     ),
     type: checker.typeToString(
       checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!)
-    )
+    ),
+    tags: symbol
+      .getJsDocTags()
+      .reduce((o, t) => (t.text ? ((o[t.name] = t.text), o) : o), {} as Record<
+        string,
+        string
+      >)
   }
 }
 
-function serializeFunction(checker: TypeChecker, node: ts.FunctionDeclaration) {
+function serializeFunction(
+  checker: TypeChecker,
+  node: ts.FunctionDeclaration
+): FunctionDoc {
   let symbol = checker.getSymbolAtLocation(node.name!)!
   let details = serializeSymbol(checker, symbol)
 
@@ -129,10 +155,13 @@ function serializeFunction(checker: TypeChecker, node: ts.FunctionDeclaration) {
     .getCallSignatures()
     .map(s => serializeSignature(checker, s))
 
-  return Object.assign({sort: 'function', signatures}, details)
+  return {sort: 'function', signatures, ...details}
 }
 
-function serializeClass(checker: TypeChecker, node: ts.ClassDeclaration) {
+function serializeClass(
+  checker: TypeChecker,
+  node: ts.ClassDeclaration
+): ClassDoc {
   const symbol = checker.getSymbolAtLocation(node.name!)
 
   let details = serializeSymbol(checker, symbol)
@@ -155,7 +184,7 @@ function serializeClass(checker: TypeChecker, node: ts.ClassDeclaration) {
     .getProperties()
     .map(s => serializeSymbol(checker, s))
 
-  return {properties, constructors, ...details}
+  return {sort: 'class', properties, constructors, ...details}
 }
 
 function serializeNode(checker: TypeChecker, node: ts.Node) {
