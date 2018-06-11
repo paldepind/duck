@@ -33,3 +33,12 @@ html(lang="en")
                   span.name
                     a.section-anchor(href=`#${val.name}`) #
                     | #{val.name}
+                each p in val.properties
+                  .property
+                    div.signature(id=p.name)
+                      span.name
+                        a.section-anchor(href=`#${p.name}`) #
+                        | #{p.name}
+                      span.type= p.type
+                      p
+                        != md(val.documentation)
