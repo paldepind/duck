@@ -2,15 +2,21 @@ import * as fs from 'fs'
 import * as path from 'path'
 import {generateJSON} from '../src/index'
 // import * as pug from 'pug'
+// @ts-ignore
 import * as handlebars from 'handlebars'
+// @ts-ignore
 import * as yargs from 'yargs'
+// @ts-ignore
 import * as sass from 'node-sass'
+// @ts-ignore
 import * as MarkdownIt from 'markdown-it'
+// @ts-ignore
 import * as hljs from 'highlight.js'
+import * as pug from 'pug'
 
 // const md = MarkdownIt()
 const md = MarkdownIt({
-  highlight: function(str, lang) {
+  highlight: function(str: string, lang: string) {
     if (lang && hljs.getLanguage(lang)) {
       try {
         return (
@@ -27,12 +33,12 @@ const md = MarkdownIt({
   }
 })
 
-handlebars.registerHelper('md', function(text) {
+handlebars.registerHelper('md', function(text: string) {
   return new handlebars.SafeString(md.render(text))
   // return md.render(options.fn(this))
 })
 
-function generateDocumentation(argv) {
+function generateDocumentation(argv: any) {
   // const template = path.resolve(__dirname, '../templates/index.pug')
   const styleFile = path.resolve(__dirname, '../templates/style.scss')
 
@@ -42,17 +48,25 @@ function generateDocumentation(argv) {
 
   if (!fs.existsSync(argv.o)) {
     fs.mkdirSync(argv.o)
-}
+  }
   // Generate data and data.json
   const data = generateJSON(source)
   fs.writeFileSync(path.resolve(argv.o, 'data.json'), JSON.stringify(data))
 
+  // Generate index.html
+  const rendered = pug.renderFile(
+    path.resolve(__dirname, '../templates/index.pug'),
+    {data}
+  )
+
+  /*
   // Generate index.html
   const template = fs.readFileSync(
     path.resolve(__dirname, '../templates/index.handlebars'),
     'utf8'
   )
   const rendered = handlebars.compile(template)({data})
+  */
   fs.writeFileSync(path.resolve(argv.o, 'index.html'), rendered)
 
   // Generate styleFile
