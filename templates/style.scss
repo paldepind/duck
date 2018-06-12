@@ -1,21 +1,24 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro');
+@import url('../node_modules/normalize.css/normalize.css');
+@import url('../node_modules/prismjs/themes/prism.css');
 
 // Variables
 $red: #670b0b;
-$menu-width: 12em;
+$menu-width: 14em;
 $large-screen: 1000px;
 $medium-screen: 850px;
 $space-grey: #efefef;
 
 body {
   color: #222;
-  font-size: 18px;
+  font-size: 16px;
   font-family: 'Open Sans', sans-serif;
-  background-color: #fafafa;
-  line-height: 1.5em;
+  background-color: #fcfcfc;
+  line-height: 1.35em;
 }
 
-html, body {
+html,
+body {
   padding: 0;
   margin: 0;
 }
@@ -38,10 +41,9 @@ a {
 }
 
 pre {
-  font-size: .9em;
-  padding: .4em;
-  // background: #fdf6e3;
-  // overflow-x: scroll;
+  font-size: 0.9em;
+  padding: 0.4em;
+  border-radius: 3px;
 }
 
 code {
@@ -52,9 +54,10 @@ table {
   border-collapse: collapse;
   display: block;
   overflow-x: scroll;
-  th, td {
+  th,
+  td {
     border: 1px solid $space-grey;
-    padding: .3em .5em;
+    padding: 0.3em 0.5em;
   }
   tbody tr:nth-child(odd) {
     background: #f9f9f9;
@@ -69,7 +72,8 @@ table {
   padding: 5em;
   background: $red;
   color: #fff;
-  font-family: et-book, Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+  font-family: et-book, Palatino, 'Palatino Linotype', 'Palatino LT STD',
+    'Book Antiqua', Georgia, serif;
   text-align: center;
   .title-wrap {
     display: flex;
@@ -127,14 +131,14 @@ table {
   ul {
     line-height: 1.4em;
     list-style: none;
-    margin: .3em 0;
-    margin-left: .5em;
-    padding-left: .5em;
+    margin: 0.3em 0;
+    margin-left: 0.5em;
+    padding-left: 0.5em;
   }
   & > ul {
     & > li > ul {
       font-size: 0.9em;
-      margin: .2em;
+      margin: 0.2em;
       padding: 0;
       & > li > ul {
         a {
@@ -142,8 +146,8 @@ table {
           text-decoration: none;
         }
         border-left: 1px solid #eee;
-        margin-left: .2em;
-        padding-left: .5em;
+        margin-left: 0.2em;
+        padding-left: 0.5em;
         border-left: 1px solid #eee;
         li.active {
           border-left: 2px solid $red;
@@ -165,7 +169,7 @@ table {
   text-decoration: none;
   font-weight: normal;
   position: absolute;
-  padding: 0 .3em;
+  padding: 0 0.3em;
   margin-left: -1.1em;
   opacity: 0;
   &:hover {
@@ -178,15 +182,15 @@ h3:hover > .section-anchor,
   opacity: 1;
 }
 
-.fn {
+.element {
   border-top: 2px solid #ececec;
-  padding: .2em 0;
+  padding: 0.8em 0;
 }
 
 .signature {
   font-family: Source Code Pro, Consolas, Menlo, Courier, monospace;
   // background-color: $space-grey;
-  padding: .4em 0;
+  padding: 0.4em 0;
   margin: 1em 0;
   // overflow-x: scroll;
   .name {
@@ -194,13 +198,17 @@ h3:hover > .section-anchor,
     font-size: 1.5em;
   }
   .type {
-    margin-left: .4em;
-    font-size: .9em;
+    margin-left: 0.4em;
+    font-size: 0.9em;
   }
   span {
     // display: inline-block;
     // vertical-align: middle;
   }
+}
+
+.doc-body {
+  margin: 0 1em;
 }
 
 .property {
@@ -272,80 +280,79 @@ hue-6-2: #e6c07b
 
 */
 
-.hljs {
-  display: block;
-  overflow-x: auto;
-  padding: 0.5em;
-  color: #abb2bf;
-  background: #282c34;
-}
+// .hljs {
+//   display: block;
+//   overflow-x: auto;
+//   padding: 0.5em;
+//   color: #abb2bf;
+//   background: #282c34;
+// }
 
-.hljs-comment,
-.hljs-quote {
-  color: #5c6370;
-  font-style: italic;
-}
+// .hljs-comment,
+// .hljs-quote {
+//   color: #5c6370;
+//   font-style: italic;
+// }
 
-.hljs-doctag,
-.hljs-keyword,
-.hljs-formula {
-  color: #c678dd;
-}
+// .hljs-doctag,
+// .hljs-keyword,
+// .hljs-formula {
+//   color: #c678dd;
+// }
 
-.hljs-section,
-.hljs-name,
-.hljs-selector-tag,
-.hljs-deletion,
-.hljs-subst {
-  color: #e06c75;
-}
+// .hljs-section,
+// .hljs-name,
+// .hljs-selector-tag,
+// .hljs-deletion,
+// .hljs-subst {
+//   color: #e06c75;
+// }
 
-.hljs-literal {
-  color: #56b6c2;
-}
+// .hljs-literal {
+//   color: #56b6c2;
+// }
 
-.hljs-string,
-.hljs-regexp,
-.hljs-addition,
-.hljs-attribute,
-.hljs-meta-string {
-  color: #98c379;
-}
+// .hljs-string,
+// .hljs-regexp,
+// .hljs-addition,
+// .hljs-attribute,
+// .hljs-meta-string {
+//   color: #98c379;
+// }
 
-.hljs-built_in,
-.hljs-class .hljs-title {
-  color: #e6c07b;
-}
+// .hljs-built_in,
+// .hljs-class .hljs-title {
+//   color: #e6c07b;
+// }
 
-.hljs-attr,
-.hljs-variable,
-.hljs-template-variable,
-.hljs-type,
-.hljs-selector-class,
-.hljs-selector-attr,
-.hljs-selector-pseudo,
-.hljs-number {
-  color: #d19a66;
-}
+// .hljs-attr,
+// .hljs-variable,
+// .hljs-template-variable,
+// .hljs-type,
+// .hljs-selector-class,
+// .hljs-selector-attr,
+// .hljs-selector-pseudo,
+// .hljs-number {
+//   color: #d19a66;
+// }
 
-.hljs-symbol,
-.hljs-bullet,
-.hljs-link,
-.hljs-meta,
-.hljs-selector-id,
-.hljs-title {
-  color: #61aeee;
-}
+// .hljs-symbol,
+// .hljs-bullet,
+// .hljs-link,
+// .hljs-meta,
+// .hljs-selector-id,
+// .hljs-title {
+//   color: #61aeee;
+// }
 
-.hljs-emphasis {
-  font-style: italic;
-}
+// .hljs-emphasis {
+//   font-style: italic;
+// }
 
-.hljs-strong {
-  font-weight: bold;
-}
+// .hljs-strong {
+//   font-weight: bold;
+// }
 
-.hljs-link {
-  text-decoration: underline;
-}
-
+// .hljs-link {
+//   text-decoration: underline;
+// }

@@ -13,6 +13,7 @@ import * as MarkdownIt from 'markdown-it'
 // @ts-ignore
 import * as hljs from 'highlight.js'
 import * as pug from 'pug'
+import * as Prism from 'prismjs'
 
 // const md = MarkdownIt()
 const md = MarkdownIt({
@@ -34,9 +35,10 @@ const md = MarkdownIt({
 })
 
 function highlight(code: string): string {
+  // hljs.highlight('typescript', code, true).value +
   return (
-    '<pre class="hljs"><code>' +
-    hljs.highlight('typescript', code, true).value +
+    '<pre class="language-javascript"><code>' +
+    Prism.highlight(code, Prism.languages.javascript, 'javascript') +
     '</code></pre>'
   )
 }

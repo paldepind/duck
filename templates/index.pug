@@ -11,24 +11,24 @@ html(lang="en")
       aside.sidebar
         #menu.fixed.sidebar-follow
           ul
-          each val in data
-            li: a(href=`#${val.name}`)= val.name
+            each val in data
+              li: a(href=`#${val.name}`)= val.name
       section.content
         each val in data
           case val.sort
             when 'function'
-              .fn
+              .element
                 div.signature(id=val.name)
                   span.name
                     a.section-anchor(href=`#${val.name}`) #
                     | #{val.name}
                   span.type= val.type
-                p
+                .doc-body
                   != md(val.documentation)
-                if val.tags.example
-                  != highlight(val.tags.example)
+                  if val.tags.example
+                    != highlight(val.tags.example)
             when 'class'
-              .fn
+              .element
                 .signature(id=val.name)
                   span.name
                     a.section-anchor(href=`#${val.name}`) #
