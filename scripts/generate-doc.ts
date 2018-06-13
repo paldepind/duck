@@ -37,9 +37,9 @@ const md = MarkdownIt({
 function highlight(code: string): string {
   // hljs.highlight('typescript', code, true).value +
   return (
-    '<pre class="language-javascript"><code>' +
-    Prism.highlight(code, Prism.languages.javascript, 'javascript') +
-    '</code></pre>'
+    // '<pre class="language-javascript"><code>' +
+    Prism.highlight(code, Prism.languages.javascript, 'typescript')
+    // + '</code></pre>'
   )
 }
 

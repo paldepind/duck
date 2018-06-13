@@ -17,6 +17,7 @@ html(lang="en")
         each val in data
           case val.sort
             when 'function'
+            when 'variable'
               .element
                 div.signature(id=val.name)
                   span.name
@@ -26,7 +27,9 @@ html(lang="en")
                 .doc-body
                   != md(val.documentation)
                   if val.tags.example
-                    != highlight(val.tags.example)
+                    pre.language-typescript
+                      code
+                        != highlight(val.tags.example)
             when 'class'
               .element
                 .signature(id=val.name)

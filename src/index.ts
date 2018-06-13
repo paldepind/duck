@@ -3,7 +3,7 @@ import {TypeChecker} from 'typescript'
 
 // This will extract the information necessary to generate documentation.
 
-export type Sort = 'function' | 'class'
+export type Sort = 'function' | 'class' | 'variable'
 
 export interface DocEntry {
   sort?: Sort
@@ -33,6 +33,10 @@ export type ClassDoc = SymbolDoc & {
 export type FunctionDoc = SymbolDoc & {
   sort: 'function'
   signatures: any[]
+}
+
+export type VariableDoc = SymbolDoc & {
+  sort: 'variable'
 }
 
 function privateSymbolToUndefined<A extends SymbolDoc>(s: A): A | undefined {
@@ -126,6 +130,19 @@ function serializeFunction(
   return {sort: 'function', signatures, ...details, ...lineInfo}
 }
 
+function serializeVariable(
+  checker: TypeChecker,
+  lineInfo: ts.LineAndCharacter,
+  symbol: ts.Symbol
+): VariableDoc {
+  let details = serializeSymbol(checker, symbol)
+
+  // Get the construct signatures
+  // let type = checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration!)
+
+  return {sort: 'variable', ...details, ...lineInfo}
+}
+
 function serializeClass(
   checker: TypeChecker,
   lineInfo: ts.LineAndCharacter,
@@ -171,6 +188,8 @@ function serializeNode(
     return serializeFunction(checker, lineInfo, symbol)
   } else if (ts.isClassDeclaration(node)) {
     return privateSymbolToUndefined(serializeClass(checker, lineInfo, symbol))
+  } else if (ts.isVariableDeclaration(node)) {
+    return serializeVariable(checker, lineInfo, symbol)
   } else {
     return undefined
   }

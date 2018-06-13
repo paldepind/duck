@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Code+Pro');
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 @import url('../node_modules/normalize.css/normalize.css');
 @import url('../node_modules/prismjs/themes/prism.css');
 
@@ -12,7 +13,7 @@ $space-grey: #efefef;
 body {
   color: #222;
   font-size: 16px;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Source Sans Pro', 'Open Sans', sans-serif;
   background-color: #fcfcfc;
   line-height: 1.35em;
 }
@@ -100,7 +101,7 @@ table {
 
 .content {
   padding: 1em;
-  max-width: 44em;
+  max-width: 45em;
   flex: 1;
 }
 
@@ -188,7 +189,6 @@ h3:hover > .section-anchor,
 }
 
 .signature {
-  font-family: Source Code Pro, Consolas, Menlo, Courier, monospace;
   // background-color: $space-grey;
   padding: 0.4em 0;
   margin: 1em 0;
@@ -198,17 +198,15 @@ h3:hover > .section-anchor,
     font-size: 1.5em;
   }
   .type {
-    margin-left: 0.4em;
+    font-family: Source Code Pro, Consolas, Menlo, Courier, monospace;
+    margin-left: 1.2em;
     font-size: 0.9em;
-  }
-  span {
-    // display: inline-block;
-    // vertical-align: middle;
+    color: #333333;
   }
 }
 
 .doc-body {
-  margin: 0 1em;
+  // margin: 0 1em;
 }
 
 .property {
