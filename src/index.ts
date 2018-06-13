@@ -33,6 +33,10 @@ export type FunctionDoc = SymbolDoc & {
   signatures: any[]
 }
 
+function privateSymbolToUndefined<A extends SymbolDoc>(s: A): A | undefined {
+  return 'private' in s.tags ? undefined : s
+}
+
 const defaultOptions: ts.CompilerOptions = {
   target: ts.ScriptTarget.ES2016,
   module: ts.ModuleKind.CommonJS,
@@ -140,10 +144,11 @@ function serializeSymbol(checker: TypeChecker, symbol: ts.Symbol) {
     ),
     tags: symbol
       .getJsDocTags()
-      .reduce((o, t) => (t.text ? ((o[t.name] = t.text), o) : o), {} as Record<
-        string,
-        string
-      >)
+      .reduce(
+        (o, t) => ((o[t.name] = t.text === undefined ? '' : t.text), o),
+        {} as Record<string, string>
+      ),
+    tagsArray: symbol.getJsDocTags()
   }
 }
 
@@ -169,7 +174,7 @@ function serializeClass(
 ): ClassDoc {
   const symbol = checker.getSymbolAtLocation(node.name!)
 
-  let details = serializeSymbol(checker, symbol)
+  const details = serializeSymbol(checker, symbol)
 
   // Get the construct signatures
   let constructorType = checker.getTypeOfSymbolAtLocation(
@@ -199,7 +204,7 @@ function serializeNode(checker: TypeChecker, node: ts.Node) {
   if (ts.isFunctionDeclaration(node)) {
     return serializeFunction(checker, node)
   } else if (ts.isClassDeclaration(node)) {
-    return serializeClass(checker, node)
+    return privateSymbolToUndefined(serializeClass(checker, node))
   } else {
     return undefined
   }
