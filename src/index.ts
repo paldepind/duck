@@ -21,11 +21,13 @@ export type SymbolDoc = {
   type: string
   documentation: string
   tags: Record<string, string>
-}
+  tagsArray: ts.JSDocTagInfo[]
+} & ts.LineAndCharacter
 
 export type ClassDoc = SymbolDoc & {
   sort: 'class'
-  properties: SymbolDoc
+  properties: any[]
+  constructors: any[]
 }
 
 export type FunctionDoc = SymbolDoc & {
@@ -45,18 +47,6 @@ const defaultOptions: ts.CompilerOptions = {
   }
 }
 
-function foldlChildren<A>(
-  f: (acc: A, n: ts.Node) => A,
-  init: A,
-  node: ts.Node
-): A {
-  let acc = init
-  ts.forEachChild(node, n => {
-    acc = f(acc, n)
-  })
-  return acc
-}
-
 /** Generate documentation for all exports in a TS file */
 export function generateJSON(
   fileName: string,
@@ -72,48 +62,16 @@ export function generateJSON(
   for (const sourceFile of program.getSourceFiles()) {
     // Skip declaration files
     if (!sourceFile.isDeclarationFile) {
-      // Walk the tree to
-      const out = foldlChildren(
-        (out, node) => out.concat(visit(checker, sourceFile, node)),
-        [] as DocEntry[],
-        sourceFile
+      const exports = checker.getExportsOfModule(
+        checker.getSymbolAtLocation(sourceFile)!
       )
+      const out: any = exports
+        .map(symbol => serializeNode(checker, sourceFile, symbol))
+        .filter(d => d !== undefined)
       output = output.concat(out)
     }
   }
   return output
-}
-
-function visit(
-  checker: TypeChecker,
-  sourceFile: ts.SourceFile,
-  node: ts.Node
-): DocEntry[] {
-  // Only consider exported nodes
-  if (!isNodeExported(node)) {
-    return []
-  }
-  const result = serializeNode(checker, node)
-  if (result !== undefined) {
-    const lineAndCharacter = sourceFile.getLineAndCharacterOfPosition(
-      node.getStart()
-    )
-    return [Object.assign(lineAndCharacter, result)]
-  } else if (ts.isModuleDeclaration(node)) {
-    // This is a namespace, visit its children
-    return foldlChildren(
-      (out, node) => out.concat(visit(checker, sourceFile, node)),
-      [] as DocEntry[],
-      node
-    )
-  } else {
-    return []
-  }
-}
-
-/** True if this is visible outside this file, false otherwise */
-function isNodeExported(node: ts.Node): boolean {
-  return (ts.getCombinedModifierFlags(node) & ts.ModifierFlags.Export) !== 0
 }
 
 /** Serialize a signature (call or construct) */
@@ -154,9 +112,9 @@ function serializeSymbol(checker: TypeChecker, symbol: ts.Symbol) {
 
 function serializeFunction(
   checker: TypeChecker,
-  node: ts.FunctionDeclaration
+  lineInfo: ts.LineAndCharacter,
+  symbol: ts.Symbol
 ): FunctionDoc {
-  let symbol = checker.getSymbolAtLocation(node.name!)!
   let details = serializeSymbol(checker, symbol)
 
   // Get the construct signatures
@@ -165,15 +123,14 @@ function serializeFunction(
     .getCallSignatures()
     .map(s => serializeSignature(checker, s))
 
-  return {sort: 'function', signatures, ...details}
+  return {sort: 'function', signatures, ...details, ...lineInfo}
 }
 
 function serializeClass(
   checker: TypeChecker,
-  node: ts.ClassDeclaration
+  lineInfo: ts.LineAndCharacter,
+  symbol: ts.Symbol
 ): ClassDoc {
-  const symbol = checker.getSymbolAtLocation(node.name!)
-
   const details = serializeSymbol(checker, symbol)
 
   // Get the construct signatures
@@ -194,17 +151,26 @@ function serializeClass(
     .getProperties()
     .map(s => serializeSymbol(checker, s))
 
-  return {sort: 'class', properties, constructors, ...details}
+  return {sort: 'class', properties, constructors, ...details, ...lineInfo}
 }
 
-function serializeNode(checker: TypeChecker, node: ts.Node) {
-  if (!node.name) {
+function serializeNode(
+  checker: TypeChecker,
+  file: ts.SourceFile,
+  symbol: ts.Symbol
+) {
+  const node =
+    symbol.valueDeclaration !== undefined
+      ? symbol.valueDeclaration
+      : symbol.declarations![0]
+  const lineInfo = file.getLineAndCharacterOfPosition(node.getStart())
+  if (!symbol.name) {
     return undefined
   }
   if (ts.isFunctionDeclaration(node)) {
-    return serializeFunction(checker, node)
+    return serializeFunction(checker, lineInfo, symbol)
   } else if (ts.isClassDeclaration(node)) {
-    return privateSymbolToUndefined(serializeClass(checker, node))
+    return privateSymbolToUndefined(serializeClass(checker, lineInfo, symbol))
   } else {
     return undefined
   }
