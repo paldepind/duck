@@ -4,15 +4,17 @@ html(lang="en")
     title List documentation
     meta(name="viewport" content="width=device-width")
     link(rel="stylesheet" href="style.css")
-    link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/solid.css" integrity="sha384-v2Tw72dyUXeU3y4aM2Y0tBJQkGfplr39mxZqlTBDUZAb9BGoC40+rdFCG0m10lXk" crossorigin="anonymous")
-    link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/fontawesome.css" integrity="sha384-q3jl8XQu1OpdLgGFvNRnPdj5VIlCvgsDQTQB6owSOHWlAurxul7f+JpUOVdAiJ5P" crossorigin="anonymous")
+    link(rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous")
   body
     .container
       aside.sidebar
         #menu.fixed.sidebar-follow
+          div.search-box
+            i.fa.fa-search
+            input#search(placeholder="Search")
           ul
             each val in data
-              li: a(href=`#${val.name}`)= val.name
+              li(data-name=`${val.name}`): a(href=`#${val.name}`)= val.name
       section.content
         each val in data
           case val.sort

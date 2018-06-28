@@ -121,6 +121,26 @@ table {
   }
 }
 
+.search-box {
+  position: relative;
+  margin-right: .5em;
+  .fa {
+    position: absolute;
+    right: 0;
+    color: #555555;
+    line-height: 2em;
+    padding-right: 1em;
+  }
+  input {
+    border: 1px solid #aaaaaa;
+    height: 2.0em;
+    border-radius: .5em;
+    padding: 0 0 0 1em;
+    box-sizing: border-box;
+    width: 100%;
+  }
+}
+
 #menu {
   a {
     color: #222;
