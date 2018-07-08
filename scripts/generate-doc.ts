@@ -51,17 +51,19 @@ handlebars.registerHelper('md', function(text: string) {
 function generateDocumentation(argv: any) {
   // const template = path.resolve(__dirname, '../templates/index.pug')
   const styleFile = path.resolve(__dirname, '../templates/style.scss')
+  const scriptFile = path.resolve(__dirname, '../templates/script.js')
 
   // const templateFn = pug.compileFile(template)
 
   const source = argv._[0]
+  const output = argv.o
 
-  if (!fs.existsSync(argv.o)) {
-    fs.mkdirSync(argv.o)
+  if (!fs.existsSync(output)) {
+    fs.mkdirSync(output)
   }
   // Generate data and data.json
   const data = generateJSON(source)
-  fs.writeFileSync(path.resolve(argv.o, 'data.json'), JSON.stringify(data))
+  fs.writeFileSync(path.resolve(output, 'data.json'), JSON.stringify(data))
 
   // Generate index.html
   const rendered = pug.renderFile(
@@ -77,11 +79,12 @@ function generateDocumentation(argv: any) {
   )
   const rendered = handlebars.compile(template)({data})
   */
-  fs.writeFileSync(path.resolve(argv.o, 'index.html'), rendered)
+  fs.writeFileSync(path.resolve(output, 'index.html'), rendered)
 
   // Generate styleFile
   const sassResult = sass.renderSync({file: styleFile})
-  fs.writeFileSync(path.resolve(argv.o, 'style.css'), sassResult.css)
+  fs.writeFileSync(path.resolve(output, 'style.css'), sassResult.css)
+  fs.copyFileSync(scriptFile, path.resolve(output, 'script.js'))
 }
 
 const argv = yargs
