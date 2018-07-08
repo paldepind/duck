@@ -39,8 +39,12 @@ export type VariableDoc = SymbolDoc & {
   sort: 'variable'
 }
 
+function isPrivate(s: {tags: any}): boolean {
+  return 'private' in s.tags
+}
+
 function privateSymbolToUndefined<A extends SymbolDoc>(s: A): A | undefined {
-  return 'private' in s.tags ? undefined : s
+  return isPrivate(s) ? undefined : s
 }
 
 const defaultOptions: ts.CompilerOptions = {
@@ -81,6 +85,7 @@ export function generateJSON(
 /** Serialize a signature (call or construct) */
 function serializeSignature(checker: TypeChecker, signature: ts.Signature) {
   return {
+    type: checker.signatureToString(signature),
     parameters: signature.parameters.map(
       serializeSymbol.bind(undefined, checker)
     ),
@@ -167,6 +172,7 @@ function serializeClass(
   const properties = instanceType
     .getProperties()
     .map(s => serializeSymbol(checker, s))
+    .filter(s => !isPrivate(s))
 
   return {sort: 'class', properties, constructors, ...details, ...lineInfo}
 }

@@ -20,6 +20,20 @@ html(lang="en")
         each val in data
           case val.sort
             when 'function'
+              .element
+                div.signature(id=val.name)
+                  div.name
+                    a.section-anchor(href=`#${val.name}`) #
+                    | #{val.name}
+                  div
+                    each signature in val.signatures
+                      div.type= signature.type
+                .doc-body
+                  != md(val.documentation)
+                  if val.tags.example
+                    pre.language-typescript
+                      code
+                        != highlight(val.tags.example)
             when 'variable'
               .element
                 div.signature(id=val.name)
@@ -39,12 +53,19 @@ html(lang="en")
                   span.name
                     a.section-anchor(href=`#${val.name}`) #
                     | #{val.name}
-                each p in val.properties
-                  .property
-                    div.signature(id=p.name)
-                      span.name
-                        a.section-anchor(href=`#${p.name}`) #
-                        | #{p.name}
-                      span.type= p.type
-                      p
-                        != md(val.documentation)
+                .doc-body
+                  != md(val.documentation)
+                .properties
+                  each p in val.properties
+                    .element
+                      div.signature(id=p.name)
+                        span.name
+                          a.section-anchor(href=`#${p.name}`) #
+                          | #{p.name}
+                        span.type= p.type
+                      .doc-body
+                        != md(p.documentation)
+                        if p.tags.example
+                          pre.language-typescript
+                            code
+                              != highlight(p.tags.example)

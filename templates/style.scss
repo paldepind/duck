@@ -101,7 +101,7 @@ table {
 
 .content {
   padding: 1em;
-  max-width: 45em;
+  max-width: 50em;
   flex: 1;
 }
 
@@ -204,15 +204,20 @@ h3:hover > .section-anchor,
 }
 
 .element {
-  border-top: 2px solid #ececec;
   padding: 0.8em 0;
+  &:not(:first-child) {
+    border-top: 2px solid #ececec;
+  }
+  &:first-child {
+    padding-top: 0;
+  }
 }
 
 .signature {
-  // background-color: $space-grey;
   padding: 0.4em 0;
   margin: 1em 0;
-  // overflow-x: scroll;
+  display: flex;
+  align-items: baseline;
   .name {
     font-weight: bold;
     font-size: 1.5em;
@@ -229,8 +234,19 @@ h3:hover > .section-anchor,
   // margin: 0 1em;
 }
 
+.properties {
+  margin-left: 2em;
+  .name {
+    font-size: 1.2em;
+  }
+}
+
 .property {
+  @extend .element;
   padding-left: 2em;
+  .name {
+    font-size: 1.2em;
+  }
 }
 
 .method {
