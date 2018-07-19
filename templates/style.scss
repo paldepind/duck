@@ -108,37 +108,40 @@ table {
 .sidebar {
   align-self: flex-start;
   width: $menu-width;
-  padding: 1em;
+  padding-right: 1em;
   .fixed {
     position: fixed;
     top: 0;
     bottom: 0;
-    padding-top: 1em;
   }
   .sidebar-follow {
     width: $menu-width;
-    overflow-y: scroll;
   }
 }
 
 .search-box {
   position: relative;
-  margin-right: .5em;
+  padding: 1em 0 0.5em 0;
   .fa {
     position: absolute;
     right: 0;
     color: #555555;
-    line-height: 2em;
-    padding-right: 1em;
+    line-height: 2.2em;
+    padding-right: 0.8em;
   }
   input {
-    border: 1px solid #aaaaaa;
-    height: 2.0em;
-    border-radius: .5em;
-    padding: 0 0 0 1em;
+    height: 2.2em;
+    border: 3px solid #ececec;
+    border-radius: 1000px;
+    padding: 0 0 0 0.8em;
     box-sizing: border-box;
     width: 100%;
   }
+}
+
+.list {
+  overflow-y: scroll;
+  max-height: 100%;
 }
 
 #menu {
@@ -152,7 +155,7 @@ table {
   ul {
     line-height: 1.4em;
     list-style: none;
-    margin: 0.3em 0;
+    margin: 0;
     margin-left: 0.5em;
     padding-left: 0.5em;
   }

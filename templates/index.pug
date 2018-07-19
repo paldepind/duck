@@ -13,7 +13,7 @@ html(lang="en")
           div.search-box
             i.fa.fa-search
             input#search(placeholder="Search")
-          ul
+          ul.list
             each val in data
               li(data-name=`${val.name}`): a(href=`#${val.name}`)= val.name
       section.content

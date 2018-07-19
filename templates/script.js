@@ -10,10 +10,8 @@ function init() {
   const names = Array.from(document.querySelectorAll('[data-name]')).map(
     element => ({element, name: element.getAttribute('data-name')})
   )
-  console.log(names)
   const searchBox = document.getElementById('search')
   searchBox.addEventListener('input', ev => {
-    console.log(ev)
     const text = ev.target.value
     for (const {element, name} of names) {
       if (name.indexOf(text) !== -1) {
