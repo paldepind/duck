@@ -113,6 +113,8 @@ table {
     position: fixed;
     top: 0;
     bottom: 0;
+    display: flex;
+    flex-direction: column;
   }
   .sidebar-follow {
     width: $menu-width;
@@ -141,7 +143,6 @@ table {
 
 .list {
   overflow-y: scroll;
-  max-height: 100%;
 }
 
 #menu {
@@ -161,23 +162,18 @@ table {
   }
   & > ul {
     & > li > ul {
-      font-size: 0.9em;
-      margin: 0.2em;
-      padding: 0;
-      & > li > ul {
-        a {
-          color: #555;
-          text-decoration: none;
-        }
-        border-left: 1px solid #eee;
-        margin-left: 0.2em;
-        padding-left: 0.5em;
-        border-left: 1px solid #eee;
-        li.active {
-          border-left: 2px solid $red;
-          padding-left: 8px;
-          margin-left: -10px;
-        }
+      a {
+        color: #555;
+        text-decoration: none;
+      }
+      border-left: 1px solid #eee;
+      margin-left: 0.2em;
+      padding-left: 0.5em;
+      border-left: 1px solid #eee;
+      li.active {
+        border-left: 2px solid $red;
+        padding-left: 8px;
+        margin-left: -10px;
       }
     }
   }

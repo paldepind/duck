@@ -5,16 +5,7 @@ import {TypeChecker} from 'typescript'
 
 export type Sort = 'function' | 'class' | 'variable'
 
-export interface DocEntry {
-  sort?: Sort
-  name?: string
-  fileName?: string
-  documentation?: string
-  type?: string
-  constructors?: DocEntry[]
-  parameters?: DocEntry[]
-  returnType?: string
-}
+export type DocEntry = ClassDoc | FunctionDoc | VariableDoc
 
 export type SymbolDoc = {
   name: string
@@ -55,11 +46,16 @@ const defaultOptions: ts.CompilerOptions = {
   }
 }
 
+export type Documentation = {
+  exports: DocEntry[]
+  categories: {name: string; entries: DocEntry[]}[]
+}
+
 /** Generate documentation for all exports in a TS file */
 export function generateJSON(
   fileName: string,
   options: ts.CompilerOptions = defaultOptions
-): DocEntry[] {
+): Documentation {
   // Build a program using the set of root file names in fileNames
   const program = ts.createProgram([fileName], options)
   const checker = program.getTypeChecker()
@@ -79,7 +75,24 @@ export function generateJSON(
       output = output.concat(out)
     }
   }
-  return output
+  const categoriesMap = new Map()
+  for (const entry of output) {
+    const category = entry.tags.category
+    if (category !== undefined) {
+      if (!categoriesMap.has(category)) {
+        categoriesMap.set(category, [])
+      }
+      categoriesMap.get(category).push(entry)
+    }
+  }
+  const categories = Array.from(categoriesMap).map(([name, entries]) => ({
+    name,
+    entries
+  }))
+  return {
+    exports: output.filter(entry => entry.tags.category === undefined),
+    categories
+  }
 }
 
 /** Serialize a signature (call or construct) */

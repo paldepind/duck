@@ -1,3 +1,57 @@
+mixin entry(val)
+  case val.sort
+    when 'function'
+      .element
+        div.signature(id=val.name)
+          div.name
+            a.section-anchor(href=`#${val.name}`) #
+            | #{val.name}
+          div
+            each signature in val.signatures
+              div.type= signature.type
+        .doc-body
+          != md(val.documentation)
+          if val.tags.example
+            pre.language-typescript
+              code
+                != highlight(val.tags.example)
+    when 'variable'
+      .element
+        div.signature(id=val.name)
+          span.name
+            a.section-anchor(href=`#${val.name}`) #
+            | #{val.name}
+          span.type= val.type
+        .doc-body
+          != md(val.documentation)
+          if val.tags.example
+            pre.language-typescript
+              code
+                != highlight(val.tags.example)
+    when 'class'
+      .element
+        .signature(id=val.name)
+          span.name
+            a.section-anchor(href=`#${val.name}`) #
+            | #{val.name}
+        .doc-body
+          != md(val.documentation)
+        .properties
+          each p in val.properties
+            .element
+              div.signature(id=p.name)
+                span.name
+                  a.section-anchor(href=`#${p.name}`) #
+                  | #{p.name}
+                span.type= p.type
+              .doc-body
+                != md(p.documentation)
+                if p.tags.example
+                  pre.language-typescript
+                    code
+                      != highlight(p.tags.example)
+
+
 doctype html
 html(lang="en")
   head
@@ -14,58 +68,18 @@ html(lang="en")
             i.fa.fa-search
             input#search(placeholder="Search")
           ul.list
-            each val in data
+            each val in data.exports
               li(data-name=`${val.name}`): a(href=`#${val.name}`)= val.name
+            each cat in data.categories
+              li
+                a(href=`#${cat.name}`)= cat.name
+                ul
+                  each val in cat.entries
+                    li(data-name=`${val.name}`): a(href=`#${val.name}`)= val.name
       section.content
-        each val in data
-          case val.sort
-            when 'function'
-              .element
-                div.signature(id=val.name)
-                  div.name
-                    a.section-anchor(href=`#${val.name}`) #
-                    | #{val.name}
-                  div
-                    each signature in val.signatures
-                      div.type= signature.type
-                .doc-body
-                  != md(val.documentation)
-                  if val.tags.example
-                    pre.language-typescript
-                      code
-                        != highlight(val.tags.example)
-            when 'variable'
-              .element
-                div.signature(id=val.name)
-                  span.name
-                    a.section-anchor(href=`#${val.name}`) #
-                    | #{val.name}
-                  span.type= val.type
-                .doc-body
-                  != md(val.documentation)
-                  if val.tags.example
-                    pre.language-typescript
-                      code
-                        != highlight(val.tags.example)
-            when 'class'
-              .element
-                .signature(id=val.name)
-                  span.name
-                    a.section-anchor(href=`#${val.name}`) #
-                    | #{val.name}
-                .doc-body
-                  != md(val.documentation)
-                .properties
-                  each p in val.properties
-                    .element
-                      div.signature(id=p.name)
-                        span.name
-                          a.section-anchor(href=`#${p.name}`) #
-                          | #{p.name}
-                        span.type= p.type
-                      .doc-body
-                        != md(p.documentation)
-                        if p.tags.example
-                          pre.language-typescript
-                            code
-                              != highlight(p.tags.example)
+        each val in data.exports
+          +entry(val)
+        each cat in data.categories
+          h2(id=cat.name)= cat.name
+          each val in cat.entries
+            +entry(val)
