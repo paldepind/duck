@@ -72,6 +72,7 @@ export function generateJSON(
       const out: any = exports
         .map(symbol => serializeNode(checker, sourceFile, symbol))
         .filter(d => d !== undefined)
+        .sort((a, b) => a!.line - b!.line)
       output = output.concat(out)
     }
   }
@@ -194,7 +195,7 @@ function serializeNode(
   checker: TypeChecker,
   file: ts.SourceFile,
   symbol: ts.Symbol
-) {
+): DocEntry | undefined {
   const node =
     symbol.valueDeclaration !== undefined
       ? symbol.valueDeclaration
